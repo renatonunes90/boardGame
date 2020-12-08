@@ -8,6 +8,8 @@ public class DataWrapper<T> implements Serializable {
 	
 	private T data;
 	
+	private ErrorResponse error;
+	
 	public DataWrapper() {}
 	
 	public DataWrapper(T object) {
@@ -20,5 +22,13 @@ public class DataWrapper<T> implements Serializable {
 
 	public void setData(T data) {
 		this.data = data;
+	}
+
+	public ErrorResponse getError() {
+		return error;
+	}
+
+	public void setError(ErrorResponse error) {
+		this.error = error;
 	}
 }

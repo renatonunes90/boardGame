@@ -8,6 +8,8 @@ import com.imperialof.online.ImperialOF.util.RegionTypeEnum;
 
 public class Match {
 
+	private Long id;
+
 	private List<Nation> nations;
 	
 	private List<Region> regions;
@@ -15,6 +17,8 @@ public class Match {
 	private List<Player> players;
 
 	public Match() {
+		id = Math.round(Math.random()*1000);
+
 		nations = new ArrayList<>();
 		for(NationEnum nation : NationEnum.values()) {
 			nations.add(new Nation(nation, createDueList()));
@@ -101,6 +105,16 @@ public class Match {
 		players = new ArrayList<>();
 	}
 	
+	public Player addPlayer(final String name) {
+		final Player newPlayer = new Player(name);
+		if ( players.size() < 6 ) {
+			players.add(newPlayer);
+			return newPlayer;
+		} else {
+			return null;
+		}
+	}
+
 	public boolean startGame(final int numberOfPlayers) {
 		return true;
 	}
@@ -119,6 +133,10 @@ public class Match {
 		return dues;
 	}
 	
+	public Long getId() {
+		return id;
+	}
+
 	public List<Nation> getNations() {
 		return nations;
 	}
