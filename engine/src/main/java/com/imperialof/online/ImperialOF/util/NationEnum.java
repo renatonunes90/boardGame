@@ -25,4 +25,14 @@ public enum NationEnum {
     public int getOrder() {
         return order;
     }
+    
+    public static NationEnum fromOrder(final int order) {
+        for (NationEnum nation : values()) {
+            if (nation.getOrder() == order) {
+                return nation;
+            }
+        }
+
+        throw new IllegalArgumentException("Unknown enum order " + order+ " for NationEnum. Allowed values are 1,2,3,4,5 or 6.");
+    }
 }

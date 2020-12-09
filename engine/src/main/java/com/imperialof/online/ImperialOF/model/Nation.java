@@ -25,6 +25,17 @@ public class Nation {
 		this.money = 0L;
 	}
 	
+	public Due getDueByPrice(final long value) {
+		return dueList.stream().filter(d -> d.getPurchasePrice() == value).findFirst().orElse(null);
+	}
+	
+	public void removeDue(final long value) {
+		final Due due = getDueByPrice(value);
+		if(due != null) {
+			dueList.remove(due);
+		}
+	}
+	
 	public Long getPoints() {
 		return points;
 	}

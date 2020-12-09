@@ -1,5 +1,6 @@
 package com.imperialof.online.ImperialOF.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,13 @@ public class Player {
 		this.dueList = new HashMap<NationEnum, List<Due>>();
 	}
 
+	public void addDue(final NationEnum nation, final Due due) {
+		if(dueList.get(nation) == null) {
+			dueList.put(nation, new ArrayList<Due>());
+		}
+		dueList.get(nation).add(due);
+	}
+	
 	public Long getId() {
 		return id;
 	}

@@ -10,6 +10,8 @@ public class Match {
 
 	private Long id;
 
+	private Boolean isStarted;
+
 	private List<Nation> nations;
 	
 	private List<Region> regions;
@@ -18,6 +20,7 @@ public class Match {
 
 	public Match() {
 		id = Math.round(Math.random()*1000);
+		isStarted = false;
 
 		nations = new ArrayList<>();
 		for(NationEnum nation : NationEnum.values()) {
@@ -72,7 +75,7 @@ public class Match {
 		regions.add(new Region("Urumqi", RegionTypeEnum.LANDCAPITAL, false, NationEnum.CHINA));
 		regions.add(new Region("Beijing", RegionTypeEnum.LANDCAPITAL, false, NationEnum.CHINA));
 		regions.add(new Region("Chongqing", RegionTypeEnum.LANDCAPITAL, false, NationEnum.CHINA));
-		regions.add(new Region("Shangai", RegionTypeEnum.OCEANCAPITAL, false, NationEnum.CHINA));
+		regions.add(new Region("Shanghai", RegionTypeEnum.OCEANCAPITAL, false, NationEnum.CHINA));
 		regions.add(new Region("New Delhi", RegionTypeEnum.LANDCAPITAL, false, NationEnum.INDIA));
 		regions.add(new Region("Mumbai", RegionTypeEnum.OCEANCAPITAL, false, NationEnum.INDIA));
 		regions.add(new Region("Kolkata", RegionTypeEnum.OCEANCAPITAL, false, NationEnum.INDIA));
@@ -115,10 +118,10 @@ public class Match {
 		}
 	}
 
-	public boolean startGame(final int numberOfPlayers) {
-		return true;
+	public void startGame() {
+		isStarted = true;
 	}
-	
+
 	private List<Due> createDueList() {
 		final List<Due> dues = new ArrayList<Due>();
 		dues.add(new Due(1, 2));
@@ -132,7 +135,15 @@ public class Match {
 		dues.add(new Due(9, 30));
 		return dues;
 	}
-	
+
+	public Region getRegion(final String name) {
+		return regions.stream().filter(r -> r.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
+	}
+
+	public Nation getNation(final NationEnum nation) {
+		return nations.stream().filter(n -> n.getNation().equals(nation)).findFirst().orElse(null);
+	}
+
 	public Long getId() {
 		return id;
 	}
@@ -149,4 +160,7 @@ public class Match {
 		return players;
 	}
 
+	public Boolean getIsStarted() {
+		return isStarted;
+	}
 }
