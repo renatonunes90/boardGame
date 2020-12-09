@@ -34,6 +34,14 @@ public class Player {
 		dueList.get(nation).add(due);
 	}
 	
+	public int getInfluenceOnNation(final NationEnum nation) {
+		if(dueList.get(nation) != null) {
+			return dueList.get(nation).stream().map(d -> d.getInterest()).reduce(0, Integer::sum);
+		} else {
+			return 0;
+		}
+	}
+	
 	public Long getId() {
 		return id;
 	}

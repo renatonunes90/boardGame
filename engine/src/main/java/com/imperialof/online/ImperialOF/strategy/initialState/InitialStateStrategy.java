@@ -5,18 +5,25 @@ import java.util.List;
 import com.imperialof.online.ImperialOF.model.Match;
 import com.imperialof.online.ImperialOF.model.Player;
 import com.imperialof.online.ImperialOF.service.BankService;
+import com.imperialof.online.ImperialOF.service.GameService;
 import com.imperialof.online.ImperialOF.util.NationEnum;
 
 public abstract class InitialStateStrategy {
 
 	protected BankService bankService;
+	
+	protected GameService gameService;
 
 	public void setBankService(final BankService bankService) {
 		this.bankService = bankService;
 	}
+	
+	public void setGameService(final GameService gameService) {
+		this.gameService = gameService;
+	}
 
 	public boolean startGame(final Match match) {
-		if(distributeNations(match) && buildFactories(match)) {
+		if(match != null && distributeNations(match) && buildFactories(match) && distributeInvestorCard(match)) {
 			match.startGame();
 			return true;
 		} else {
@@ -59,18 +66,36 @@ public abstract class InitialStateStrategy {
 	}
 	
 	private boolean buildFactories(final Match match) {
-		Boolean result = bankService.buildFactory(match, "Brasilia", true);
-		result &= bankService.buildFactory(match,"Rio de Janeiro", true);
-		result &= bankService.buildFactory(match,"Chicago", true);
-		result &= bankService.buildFactory(match,"New Orleans", true);
-		result &= bankService.buildFactory(match,"Paris", true);
-		result &= bankService.buildFactory(match,"London", true);
-		result &= bankService.buildFactory(match,"Moscow", true);
-		result &= bankService.buildFactory(match,"Vladivostok", true);
-		result &= bankService.buildFactory(match,"Beijing", true);
-		result &= bankService.buildFactory(match,"Shanghai", true);
-		result &= bankService.buildFactory(match,"New Delhi", true);
-		result &= bankService.buildFactory(match,"Mumbai", true);
+		Boolean result = gameService.buildFactory(match, "Brasilia", true);
+		result &= gameService.buildFactory(match,"Rio de Janeiro", true);
+		result &= gameService.buildFactory(match,"Chicago", true);
+		result &= gameService.buildFactory(match,"New Orleans", true);
+		result &= gameService.buildFactory(match,"Paris", true);
+		result &= gameService.buildFactory(match,"London", true);
+		result &= gameService.buildFactory(match,"Moscow", true);
+		result &= gameService.buildFactory(match,"Vladivostok", true);
+		result &= gameService.buildFactory(match,"Beijing", true);
+		result &= gameService.buildFactory(match,"Shanghai", true);
+		result &= gameService.buildFactory(match,"New Delhi", true);
+		result &= gameService.buildFactory(match,"Mumbai", true);
 		return result;
+	}
+	
+	private boolean distributeInvestorCard(final Match match) {
+		Player firstInvestor = null;
+		Player ownerOfRussia = gameService.getOwnerOfNation(match, NationEnum.RUSSIA);
+		Player ownerOfChina = gameService.getOwnerOfNation(match, NationEnum.CHINA);
+		if ( ownerOfRussia != null ) {
+			firstInvestor = gameService.getLeftPlayerOf(match, ownerOfRussia);
+		} else if ( ownerOfChina != null ) {
+			firstInvestor = gameService.getLeftPlayerOf(match, ownerOfChina);
+		} 
+		
+		if(firstInvestor == null){
+			return false;
+		}
+		
+		firstInvestor.setIsInvestor(true);
+		return true;
 	}
 }

@@ -5,22 +5,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.imperialof.online.ImperialOF.model.Due;
-import com.imperialof.online.ImperialOF.model.Match;
 import com.imperialof.online.ImperialOF.model.Nation;
 import com.imperialof.online.ImperialOF.model.Player;
-import com.imperialof.online.ImperialOF.model.Region;
-import com.imperialof.online.ImperialOF.util.RegionTypeEnum;
 
 @Service
 public class BankService {
 
     private static Logger LOGGER = LoggerFactory.getLogger(BankService.class);
 
-    private static final Long FACTORY_PRICE = 5l;
-
 	public boolean buyDue(final Player player, final Nation nation, final long value) {
 		if(player != null && nation != null && value > 0) {
-			if(value > player.getMoney()) {
+			if(!playerHasMoney(player, value)) {
 				LOGGER.error(String.format("buyDue: Player %s hasn't money to buy due %s from nation %s.", 
 						player.getName(), value, nation.getNation().getCode()));;
 				return false;	
@@ -46,38 +41,40 @@ public class BankService {
 		}
 	}
 	
-	public boolean buildFactory(final Match match, final String regionName, final boolean isInitial) {
-		if(match != null) {
-			final Region region = match.getRegion(regionName);
-			if(region != null) {
-				if(!region.getType().equals(RegionTypeEnum.NEUTRAL)) {
-					final Nation nation = match.getNation(region.getOwner());
-					if(!isInitial && nation.getMoney() < 5) {
-						LOGGER.error(String.format("buildFactory: Can't build factory in region %s. %s hasn't money.", 
-								regionName, nation.getNation().getCode()));
-						return false;	
-					}
-					
-					if(!isInitial) {
-						nation.setMoney(nation.getMoney()-FACTORY_PRICE);
-					}
-					LOGGER.info(String.format("buildFactory: Factory built in region %s.", regionName));
-					region.setHasFactory(true);
-					return true;
-				} else {
-					LOGGER.error(String.format("buildFactory: Can't build factory in neutral  region %s.", regionName));
-					return false;
-				}
-			} else {
-				LOGGER.error(String.format("buildFactory: Region %s invalid.", regionName));
-				return false;
-			}
+	public boolean playerHasMoney(final Player player, final long value) {
+		if(player != null) {		
+			return player.getMoney() > value;
 		} else {
-			LOGGER.error("buildFactory: Match invalid.");
+			LOGGER.error("playerHasMoney: Invalid player.");
 			return false;
 		}
 	}
 	
+	public boolean nationHasMoney(final Nation nation, final long value) {
+		if(nation != null) {		
+			return nation.getMoney() > value;
+		} else {
+			LOGGER.error("nationHasMoney: Invalid nation.");
+			return false;
+		}
+	}
+	
+	public boolean nationPayment(final Nation nation, final long value) {
+		if(nation != null) {
+			if(nationHasMoney(nation, value)) {
+				LOGGER.info(String.format("nationPayment: Nation %s paid $ %s to the bank.", nation.getNation().getCode(), value));
+				nation.setMoney(nation.getMoney()-value);
+				return true;
+			} else {
+				LOGGER.error(String.format("nationPayment: Nation %s hasn't $ %s to pay to the bank.", nation.getNation().getCode(), value));
+				return false;	
+			}
+		} else {
+			LOGGER.error("nationPayment: Invalid nation.");
+			return false;
+		}
+	}
+
 	public boolean receiveMoney(final Player player, final long value) {
 		if(player != null && value > 0) {
 			player.setMoney(value + player.getMoney());
@@ -91,7 +88,7 @@ public class BankService {
 	
 	public boolean transferMoneyToNation(final Player player, final Nation nation, final long value) {
 		if(player != null && nation != null && value > 0) {
-			if(value > player.getMoney()) {
+			if(!playerHasMoney(player, value)) {
 				LOGGER.error(String.format("transferMoneyToNation: Player %s hasn't money to transfer %s to nation %s.", 
 						player.getName(), value, nation.getNation().getCode()));;
 				return false;	

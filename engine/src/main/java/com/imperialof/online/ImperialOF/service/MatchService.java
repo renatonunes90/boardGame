@@ -16,6 +16,9 @@ public class MatchService {
 
 	@Autowired
 	private BankService bankService;
+	
+	@Autowired
+	private GameService gameService;
 
 	private List<Match> matches;
 	
@@ -69,7 +72,7 @@ public class MatchService {
 			throw new BadRequestException("Match must have at least 2 players.");
 		}
 		
-		InitialStateStrategyType.get(match.getPlayers().size(), bankService).startGame(match);
+		InitialStateStrategyType.get(match.getPlayers().size(), bankService, gameService).startGame(match);
 
 		return match;
 	}

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.imperialof.online.ImperialOF.service.BankService;
+import com.imperialof.online.ImperialOF.service.GameService;
 
 public class InitialStateStrategyType {
 	
@@ -17,8 +18,9 @@ public class InitialStateStrategyType {
 		strategyMap.put(6, new FourOrMorePlayersStateStrategy());
 	}
 	
-	public static InitialStateStrategy get(int key, BankService bankService) {
+	public static InitialStateStrategy get(int key, BankService bankService, GameService gameService) {
 		strategyMap.get(key).setBankService(bankService);
+		strategyMap.get(key).setGameService(gameService);
 		return strategyMap.get(key);
 	}
 }
