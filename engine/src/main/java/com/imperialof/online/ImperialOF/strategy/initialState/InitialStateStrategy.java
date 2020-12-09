@@ -3,6 +3,7 @@ package com.imperialof.online.ImperialOF.strategy.initialState;
 import java.util.List;
 
 import com.imperialof.online.ImperialOF.model.Match;
+import com.imperialof.online.ImperialOF.model.Player;
 import com.imperialof.online.ImperialOF.service.BankService;
 import com.imperialof.online.ImperialOF.util.NationEnum;
 
@@ -33,6 +34,30 @@ public abstract class InitialStateStrategy {
 		return NationEnum.fromOrder(random);
 	}
 	 
+	protected boolean setNationToPlayer(final Match match, final Player player, final NationEnum nation) {
+		boolean result = true;
+		if(nation.equals(NationEnum.RUSSIA)) {
+			result &= bankService.buyDue(player, match.getNation(NationEnum.RUSSIA), 9l);
+			result &= bankService.buyDue(player, match.getNation(NationEnum.EUROPE), 2l);
+		} else if(nation.equals(NationEnum.CHINA)) {
+			result &= bankService.buyDue(player, match.getNation(NationEnum.CHINA), 9l);
+			result &= bankService.buyDue(player, match.getNation(NationEnum.USA), 2l);
+		} else if(nation.equals(NationEnum.INDIA)) {
+			result &= bankService.buyDue(player, match.getNation(NationEnum.INDIA), 9l);
+			result &= bankService.buyDue(player, match.getNation(NationEnum.BRAZIL), 2l);	
+		} else if(nation.equals(NationEnum.BRAZIL)) {
+			result &= bankService.buyDue(player, match.getNation(NationEnum.BRAZIL), 9l);
+			result &= bankService.buyDue(player, match.getNation(NationEnum.CHINA), 2l);
+		} else if(nation.equals(NationEnum.USA)) {
+			result &= bankService.buyDue(player, match.getNation(NationEnum.USA), 9l);
+			result &= bankService.buyDue(player, match.getNation(NationEnum.RUSSIA), 2l);
+		} else {
+			result &= bankService.buyDue(player, match.getNation(NationEnum.EUROPE), 9l);
+			result &= bankService.buyDue(player, match.getNation(NationEnum.INDIA), 2l);
+		}
+		return result;
+	}
+	
 	private boolean buildFactories(final Match match) {
 		Boolean result = bankService.buildFactory(match, "Brasilia", true);
 		result &= bankService.buildFactory(match,"Rio de Janeiro", true);

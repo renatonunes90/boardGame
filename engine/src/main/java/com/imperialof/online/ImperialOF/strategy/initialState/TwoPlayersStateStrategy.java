@@ -14,31 +14,33 @@ public class TwoPlayersStateStrategy extends InitialStateStrategy {
 		boolean result = true;
 		final List<Player> players = match.getPlayers();
 		
-		result &= bankService.receiveMoney(players.get(0), 35);
-		result &= bankService.receiveMoney(players.get(1), 35);
+		players.forEach(p -> {
+			bankService.receiveMoney(p, 35);
+		});
 		
 		Player playerOne = players.get(0);
-		Player playerTwo = players.get(1);
+		Player playerTwo = players.get(1);	
+		
 		final NationEnum firstNation = getRandomNation(Arrays.asList(0,3,4,5,6));
-		if(firstNation.equals(NationEnum.CHINA)) {
-			playerOne = players.get(1);
-			playerTwo = players.get(0);
+		result &= setNationsToPlayer(match, playerOne, firstNation);
+		
+		final NationEnum secondNation = getRandomNation(Arrays.asList(0,firstNation.getOrder(),3,4,5,6));	
+		result &= setNationsToPlayer(match, playerTwo, secondNation);
+		
+		return result;
+	}
+	
+	private boolean setNationsToPlayer(final Match match, final Player player, final NationEnum nation) {
+		boolean result = true;
+		if(nation.equals(NationEnum.RUSSIA)) {
+			result &= setNationToPlayer(match, player, NationEnum.RUSSIA);
+			result &= setNationToPlayer(match, player, NationEnum.USA);
+			result &= setNationToPlayer(match, player, NationEnum.INDIA);
+		} else {
+			result &= setNationToPlayer(match, player, NationEnum.CHINA);
+			result &= setNationToPlayer(match, player, NationEnum.BRAZIL);
+			result &= setNationToPlayer(match, player, NationEnum.EUROPE);
 		}
-		
-		result &= bankService.buyDue(playerOne, match.getNation(NationEnum.RUSSIA), 9l);
-		result &= bankService.buyDue(playerOne, match.getNation(NationEnum.EUROPE), 2l);
-		result &= bankService.buyDue(playerOne, match.getNation(NationEnum.USA), 9l);
-		result &= bankService.buyDue(playerOne, match.getNation(NationEnum.RUSSIA), 2l);
-		result &= bankService.buyDue(playerOne, match.getNation(NationEnum.INDIA), 9l);
-		result &= bankService.buyDue(playerOne, match.getNation(NationEnum.BRAZIL), 2l);
-		
-		result &= bankService.buyDue(playerTwo, match.getNation(NationEnum.CHINA), 9l);
-		result &= bankService.buyDue(playerTwo, match.getNation(NationEnum.USA), 2l);
-		result &= bankService.buyDue(playerTwo, match.getNation(NationEnum.BRAZIL), 9l);
-		result &= bankService.buyDue(playerTwo, match.getNation(NationEnum.CHINA), 2l);
-		result &= bankService.buyDue(playerTwo, match.getNation(NationEnum.EUROPE), 9l);
-		result &= bankService.buyDue(playerTwo, match.getNation(NationEnum.INDIA), 2l);
-		
 		return result;
 	}
 }
