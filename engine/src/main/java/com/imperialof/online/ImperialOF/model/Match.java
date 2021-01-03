@@ -2,6 +2,7 @@ package com.imperialof.online.ImperialOF.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.imperialof.online.ImperialOF.util.NationEnum;
 import com.imperialof.online.ImperialOF.util.RegionTypeEnum;
@@ -138,6 +139,10 @@ public class Match {
 
 	public Region getRegion(final String name) {
 		return regions.stream().filter(r -> r.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
+	}
+	
+	public List<Region> getRegionsOfNation(final NationEnum nation) {
+		return regions.stream().filter(r -> r.getOwner() != null && r.getOwner().equals(nation)).collect(Collectors.toList());
 	}
 
 	public Nation getNation(final NationEnum nation) {

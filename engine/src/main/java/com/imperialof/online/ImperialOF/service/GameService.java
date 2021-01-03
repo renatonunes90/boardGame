@@ -12,8 +12,10 @@ import com.imperialof.online.ImperialOF.model.Match;
 import com.imperialof.online.ImperialOF.model.Nation;
 import com.imperialof.online.ImperialOF.model.Player;
 import com.imperialof.online.ImperialOF.model.Region;
+import com.imperialof.online.ImperialOF.model.Troop;
 import com.imperialof.online.ImperialOF.util.NationEnum;
 import com.imperialof.online.ImperialOF.util.RegionTypeEnum;
+import com.imperialof.online.ImperialOF.util.TroopTypeEnum;
 
 @Service
 public class GameService {
@@ -29,7 +31,7 @@ public class GameService {
 		if(match != null) {
 			final Region region = match.getRegion(regionName);
 			if(region != null) {
-				if(!region.getType().equals(RegionTypeEnum.NEUTRAL)) {
+				if(!region.getType().equals(RegionTypeEnum.NEUTRAL) && !region.getHasFactory()) {
 					final Nation nation = match.getNation(region.getOwner());
 					if(!isInitial && !bankService.nationHasMoney(nation, FACTORY_PRICE)) {
 						LOGGER.error(String.format("buildFactory: Can't build factory in region %s. %s hasn't money.", 
@@ -44,7 +46,7 @@ public class GameService {
 					LOGGER.info(String.format("buildFactory: Factory built in region %s.", regionName));
 					return true;
 				} else {
-					LOGGER.error(String.format("buildFactory: Can't build factory in neutral  region %s.", regionName));
+					LOGGER.error(String.format("buildFactory: Can't build factory in region %s. It's neutral or already has a factory.", regionName));
 					return false;
 				}
 			} else {
@@ -56,6 +58,7 @@ public class GameService {
 			return false;
 		}
 	}
+
 	
 	public Player getCurrentInvestor(final Match match) {
 		if(match != null) {
@@ -140,5 +143,29 @@ public class GameService {
 		}
 	}
 	
+	public boolean canTrainTroop(final Region region) {
+		return region.getHasFactory() && !region.getType().equals(RegionTypeEnum.NEUTRAL) && !region.hasHostileTroop();
+	}
+	
+	public boolean trainTroops(final Match match, final NationEnum nationEnum) {
+		if(match != null) {
+			final List<Region> regions = match.getRegionsOfNation(nationEnum);
+			if(regions.size() > 0) {
+				regions.stream().filter(r -> canTrainTroop(r))
+					.forEach(r ->  {
+						TroopTypeEnum troopType = r.getType().equals(RegionTypeEnum.LANDCAPITAL) ? TroopTypeEnum.LANDTROOP : TroopTypeEnum.SEATROOP;
+						r.addTroop(new Troop(troopType, nationEnum, false));
+						LOGGER.info(String.format("trainTroop: Troop trained in region %s of nation %s.", r.getName(), nationEnum.getCode()));
+					});		
+				return true;
+			} else {
+				LOGGER.error(String.format("trainTroop: Nation %s doesn't has regions.", nationEnum.getCode()));
+				return false;
+			}
+		} else {
+			LOGGER.error("trainTroop: Invalid match.");
+			return false;
+		}
+	}
 
 }

@@ -8,7 +8,15 @@ public class Troop {
 	private TroopTypeEnum type;
 	
 	private NationEnum nation;
+	
+	private boolean isHostile;
 
+	public Troop(final TroopTypeEnum type, final NationEnum nation, boolean isHostile) {
+		this.type = type;
+		this.nation = nation;
+		this.isHostile = isHostile;
+	}
+	
 	public TroopTypeEnum getType() {
 		return type;
 	}
@@ -23,5 +31,13 @@ public class Troop {
 
 	public void setNation(NationEnum nation) {
 		this.nation = nation;
+	}
+
+	public boolean isHostile() {
+		return isHostile;
+	}
+
+	public void setHostile(boolean isHostile) {
+		this.isHostile = isHostile;
 	}
 }

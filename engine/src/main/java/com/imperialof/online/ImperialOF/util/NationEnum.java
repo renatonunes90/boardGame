@@ -26,6 +26,16 @@ public enum NationEnum {
         return order;
     }
     
+    public static NationEnum fromCode(final String code) {
+        for (NationEnum nation : values()) {
+            if (nation.getCode().equalsIgnoreCase(code)) {
+                return nation;
+            }
+        }
+
+        throw new IllegalArgumentException("Unknown enum code " + code+ " for NationEnum. Allowed values are Ru,Ch,In,Br,USA or Eu.");
+    }
+    
     public static NationEnum fromOrder(final int order) {
         for (NationEnum nation : values()) {
             if (nation.getOrder() == order) {

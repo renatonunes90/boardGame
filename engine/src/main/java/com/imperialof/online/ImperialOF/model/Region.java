@@ -29,6 +29,14 @@ public class Region {
 		this.troops = new ArrayList<>();
 	}
 	
+	public void addTroop(final Troop troop) {
+		this.troops.add(troop);
+	}
+	
+	public boolean hasHostileTroop() {
+		return troops.size() > 0 && troops.stream().filter(t -> t.isHostile()).findFirst().isPresent();
+	}
+	
 	public String getName() {
 		return name;
 	}
